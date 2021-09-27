@@ -30,8 +30,3 @@ hex2bin %HEX_FILENAME% > NUL
 REM Perform the checksum calculation.
 cksum < %BIN_FILENAME% > %CRC_FILENAME%
 type %CRC_FILENAME%
-
-REM Copy the bin file and crc file to the server directory.
-copy /y %BIN_FILENAME% %SERVER_PATH%\ > NUL
-copy /y %CRC_FILENAME% %SERVER_PATH%\ > NUL
-

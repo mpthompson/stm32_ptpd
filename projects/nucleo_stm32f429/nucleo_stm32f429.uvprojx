@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Debug_ARMCC\</OutputDirectory>
-          <OutputName>nucleo_ptpd_slave</OutputName>
+          <OutputName>nucleo_stm32f429</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -82,7 +82,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>..\..\utilities\windows\bin\hex2bin.exe .\Debug_ARMCC\nucleo_ptpd_slave.hex</UserProg1Name>
+            <UserProg1Name>..\..\utilities\windows\bin\hex2bin2crc.bat .\Debug_ARMCC\nucleo_stm32f429.hex</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -275,8 +275,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x8000000</StartAddress>
-                <Size>0x200000</Size>
+                <StartAddress>0x8020000</StartAddress>
+                <Size>0x1e0000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>DEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x00 EVR_RTX_DISABLE TEST_WATCHDOG</Define>
+              <Define>DEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x20000 EVR_RTX_DISABLE</Define>
               <Undefine></Undefine>
               <IncludePath>.;.\src;..\shared;..\shared\ptpd\src;..\shared_nucleo;..\shared_stm32;..\shared_stm32\lwip_port;..\..\libraries\CMSIS\5.4.0\CMSIS\Core\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Source;..\..\libraries\CMSIS\5.4.0_ST\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL_Driver\Inc;..\..\libraries\LWIP-2.1.2\src;..\..\libraries\LWIP-2.1.2\src\include;..\..\libraries\ntshell-v0.3.1\lib\core;..\..\libraries\ntshell-v0.3.1\lib\util</IncludePath>
             </VariousControls>
@@ -471,6 +471,16 @@
         <Group>
           <GroupName>Application Shared</GroupName>
           <Files>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>cksum.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\cksum.c</FilePath>
+            </File>
             <File>
               <FileName>event.c</FileName>
               <FileType>1</FileType>
@@ -1317,13 +1327,13 @@
       <TargetName>ARMCC Release</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6120000::V6.12::.\ARMCLANG</pCCUsed>
+      <pCCUsed>6140000::V6.14::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F429ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.15.0</PackID>
+          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00030000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00200000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -1356,7 +1366,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Release_ARMCC\</OutputDirectory>
-          <OutputName>nucleo_ptpd_slave</OutputName>
+          <OutputName>nucleo_stm32f429</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -1389,7 +1399,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>..\..\utilities\windows\bin\hex2bin.exe .\Release_ARMCC\nucleo_ptpd_slave.hex</UserProg1Name>
+            <UserProg1Name>..\..\utilities\windows\bin\hex2bin2crc.bat .\Release_ARMCC\nucleo_stm32f429.hex</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -1582,8 +1592,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x8000000</StartAddress>
-                <Size>0x200000</Size>
+                <StartAddress>0x8020000</StartAddress>
+                <Size>0x1e0000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -1644,7 +1654,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>NDEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x00 EVR_RTX_DISABLE</Define>
+              <Define>NDEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x20000 EVR_RTX_DISABLE</Define>
               <Undefine></Undefine>
               <IncludePath>.;.\src;..\shared;..\shared\ptpd\src;..\shared_nucleo;..\shared_stm32;..\shared_stm32\lwip_port;..\..\libraries\CMSIS\5.4.0\CMSIS\Core\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Source;..\..\libraries\CMSIS\5.4.0_ST\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL_Driver\Inc;..\..\libraries\LWIP-2.1.2\src;..\..\libraries\LWIP-2.1.2\src\include;..\..\libraries\ntshell-v0.3.1\lib\core;..\..\libraries\ntshell-v0.3.1\lib\util</IncludePath>
             </VariousControls>
@@ -1778,6 +1788,16 @@
         <Group>
           <GroupName>Application Shared</GroupName>
           <Files>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>cksum.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\cksum.c</FilePath>
+            </File>
             <File>
               <FileName>event.c</FileName>
               <FileType>1</FileType>
@@ -2630,7 +2650,7 @@
         <TargetCommonOption>
           <Device>STM32F429ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.15.0</PackID>
+          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00030000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00200000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -2663,7 +2683,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Debug_GCC\</OutputDirectory>
-          <OutputName>nucleo_ptpd_slave</OutputName>
+          <OutputName>nucleo_stm32f429</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -2694,9 +2714,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>..\..\utilities\windows\bin\hex2bin2crc.bat .\Debug_GCC\nucleo_stm32f429.hex</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -2856,7 +2876,7 @@
             <uThumb>1</uThumb>
             <VariousControls>
               <MiscControls>-g -g3 -gdwarf-3 -gstrict-dwarf -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin</MiscControls>
-              <Define>DEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x00 EVR_RTX_DISABLE</Define>
+              <Define>DEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x20000 EVR_RTX_DISABLE</Define>
               <Undefine></Undefine>
               <IncludePath>.;.\src;..\shared;..\shared\ptpd\src;..\shared_nucleo;..\shared_stm32;..\shared_stm32\lwip_port;..\..\libraries\CMSIS\5.4.0\CMSIS\Core\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Source;..\..\libraries\CMSIS\5.4.0_ST\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL_Driver\Inc;..\..\libraries\LWIP-2.1.2\src;..\..\libraries\LWIP-2.1.2\src\include;..\..\libraries\ntshell-v0.3.1\lib\core;..\..\libraries\ntshell-v0.3.1\lib\util</IncludePath>
             </VariousControls>
@@ -2972,6 +2992,16 @@
         <Group>
           <GroupName>Application Shared</GroupName>
           <Files>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>cksum.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\cksum.c</FilePath>
+            </File>
             <File>
               <FileName>event.c</FileName>
               <FileType>1</FileType>
@@ -3816,7 +3846,7 @@
         <TargetCommonOption>
           <Device>STM32F429ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.15.0</PackID>
+          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00030000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00200000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -3849,10 +3879,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Release_GCC\</OutputDirectory>
-          <OutputName>nucleo_ptpd_slave</OutputName>
+          <OutputName>nucleo_stm32f429</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\Release_GCC\</ListingPath>
@@ -3880,9 +3910,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>..\..\utilities\windows\bin\hex2bin2crc.bat .\Release_GCC\nucleo_stm32f429.hex</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -4042,7 +4072,7 @@
             <uThumb>1</uThumb>
             <VariousControls>
               <MiscControls>-mfpu=fpv4-sp-d16 -mfloat-abi=hard -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin</MiscControls>
-              <Define>NDEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x00 EVR_RTX_DISABLE</Define>
+              <Define>NDEBUG USE_STM32F4XX_NUCLEO_144 USE_HAL_DRIVER USE_FULL_LL_DRIVER __CMSIS_RTOS VECT_TAB_OFFSET=0x20000 EVR_RTX_DISABLE</Define>
               <Undefine></Undefine>
               <IncludePath>.;.\src;..\shared;..\shared\ptpd\src;..\shared_nucleo;..\shared_stm32;..\shared_stm32\lwip_port;..\..\libraries\CMSIS\5.4.0\CMSIS\Core\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Include;..\..\libraries\CMSIS\5.4.0\CMSIS\RTOS2\RTX\Source;..\..\libraries\CMSIS\5.4.0_ST\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL_Driver\Inc;..\..\libraries\LWIP-2.1.2\src;..\..\libraries\LWIP-2.1.2\src\include;..\..\libraries\ntshell-v0.3.1\lib\core;..\..\libraries\ntshell-v0.3.1\lib\util</IncludePath>
             </VariousControls>
@@ -4157,6 +4187,16 @@
         <Group>
           <GroupName>Application Shared</GroupName>
           <Files>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>cksum.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\shared\cksum.c</FilePath>
+            </File>
             <File>
               <FileName>event.c</FileName>
               <FileType>1</FileType>

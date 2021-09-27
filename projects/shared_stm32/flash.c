@@ -10,194 +10,121 @@
 #include "console.h"
 #include "flash.h"
 
+static const uint32_t flash_sector_addr[FLASH_SECTOR_TOTAL] =
+{
+  ADDR_FLASH_SECTOR_0,
+  ADDR_FLASH_SECTOR_1,
+  ADDR_FLASH_SECTOR_2,
+  ADDR_FLASH_SECTOR_3,
+  ADDR_FLASH_SECTOR_4,
+  ADDR_FLASH_SECTOR_5,
+  ADDR_FLASH_SECTOR_6,
+  ADDR_FLASH_SECTOR_7,
+  ADDR_FLASH_SECTOR_8,
+  ADDR_FLASH_SECTOR_9,
+  ADDR_FLASH_SECTOR_10,
+  ADDR_FLASH_SECTOR_11,
+  ADDR_FLASH_SECTOR_12,
+  ADDR_FLASH_SECTOR_13,
+  ADDR_FLASH_SECTOR_14,
+  ADDR_FLASH_SECTOR_15,
+  ADDR_FLASH_SECTOR_16,
+  ADDR_FLASH_SECTOR_17,
+  ADDR_FLASH_SECTOR_18,
+  ADDR_FLASH_SECTOR_19,
+  ADDR_FLASH_SECTOR_20,
+  ADDR_FLASH_SECTOR_21,
+  ADDR_FLASH_SECTOR_22,
+  ADDR_FLASH_SECTOR_23
+};
+
+static const uint32_t flash_sector_size[FLASH_SECTOR_TOTAL] =
+{
+  SIZE_FLASH_SECTOR_0,
+  SIZE_FLASH_SECTOR_1,
+  SIZE_FLASH_SECTOR_2,
+  SIZE_FLASH_SECTOR_3,
+  SIZE_FLASH_SECTOR_4,
+  SIZE_FLASH_SECTOR_5,
+  SIZE_FLASH_SECTOR_6,
+  SIZE_FLASH_SECTOR_7,
+  SIZE_FLASH_SECTOR_8,
+  SIZE_FLASH_SECTOR_9,
+  SIZE_FLASH_SECTOR_10,
+  SIZE_FLASH_SECTOR_11,
+  SIZE_FLASH_SECTOR_12,
+  SIZE_FLASH_SECTOR_13,
+  SIZE_FLASH_SECTOR_14,
+  SIZE_FLASH_SECTOR_15,
+  SIZE_FLASH_SECTOR_16,
+  SIZE_FLASH_SECTOR_17,
+  SIZE_FLASH_SECTOR_18,
+  SIZE_FLASH_SECTOR_19,
+  SIZE_FLASH_SECTOR_20,
+  SIZE_FLASH_SECTOR_21,
+  SIZE_FLASH_SECTOR_22,
+  SIZE_FLASH_SECTOR_23
+};
+
 // Application firmware flash writing state variables.
-static bool flash_sb_mode = false;
 static uint32_t flash_app_addr;
 static uint32_t flash_app_data;
 static uint32_t flash_app_count;
 static bool flash_app_error;
 
-// Get the sector of a given address.
-static uint32_t flash_sector_address(uint32_t address)
+// Returns true if the indicated area of flash is erased.
+static bool flash_sector_erased(uint32_t sector)
 {
-  uint32_t sector = 0;
-
-  if (!flash_sb_mode)
+  uint8_t *p = (uint8_t *) flash_sector_addr[sector];
+  uint32_t size = flash_sector_size[sector];
+  
+  // Check across the flash sector that all bytes are 0xFF.
+  while (size--)
   {
-    if ((address < ADDR_FLASH_SB_SECTOR_1) && (address >= ADDR_FLASH_SB_SECTOR_0))
-    {
-      sector = FLASH_SECTOR_0;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_2) && (address >= ADDR_FLASH_SB_SECTOR_1))
-    {
-      sector = FLASH_SECTOR_1;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_3) && (address >= ADDR_FLASH_SB_SECTOR_2))
-    {
-      sector = FLASH_SECTOR_2;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_4) && (address >= ADDR_FLASH_SB_SECTOR_3))
-    {
-      sector = FLASH_SECTOR_3;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_5) && (address >= ADDR_FLASH_SB_SECTOR_4))
-    {
-      sector = FLASH_SECTOR_4;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_6) && (address >= ADDR_FLASH_SB_SECTOR_5))
-    {
-      sector = FLASH_SECTOR_5;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_7) && (address >= ADDR_FLASH_SB_SECTOR_6))
-    {
-      sector = FLASH_SECTOR_6;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_8) && (address >= ADDR_FLASH_SB_SECTOR_7))
-    {
-      sector = FLASH_SECTOR_7;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_9) && (address >= ADDR_FLASH_SB_SECTOR_8))
-    {
-      sector = FLASH_SECTOR_8;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_10) && (address >= ADDR_FLASH_SB_SECTOR_9))
-    {
-      sector = FLASH_SECTOR_9;
-    }
-    else if ((address < ADDR_FLASH_SB_SECTOR_11) && (address >= ADDR_FLASH_SB_SECTOR_10))
-    {
-      sector = FLASH_SECTOR_10;
-    }
-    else // (address < FLASH_END_ADDR) && (address >= ADDR_FLASH_SB_SECTOR_11)
-    {
-      sector = FLASH_SECTOR_11;
-    }
-  }
-  else
-  {
-    if ((address < ADDR_FLASH_DB_SECTOR_1) && (address >= ADDR_FLASH_DB_SECTOR_0))
-    {
-      sector = FLASH_SECTOR_0;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_2) && (address >= ADDR_FLASH_DB_SECTOR_1))
-    {
-      sector = FLASH_SECTOR_1;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_3) && (address >= ADDR_FLASH_DB_SECTOR_2))
-    {
-      sector = FLASH_SECTOR_2;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_4) && (address >= ADDR_FLASH_DB_SECTOR_3))
-    {
-      sector = FLASH_SECTOR_3;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_5) && (address >= ADDR_FLASH_DB_SECTOR_4))
-    {
-      sector = FLASH_SECTOR_4;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_6) && (address >= ADDR_FLASH_DB_SECTOR_5))
-    {
-      sector = FLASH_SECTOR_5;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_7) && (address >= ADDR_FLASH_DB_SECTOR_6))
-    {
-      sector = FLASH_SECTOR_6;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_8) && (address >= ADDR_FLASH_DB_SECTOR_7))
-    {
-      sector = FLASH_SECTOR_7;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_9) && (address >= ADDR_FLASH_DB_SECTOR_8))
-    {
-      sector = FLASH_SECTOR_8;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_10) && (address >= ADDR_FLASH_DB_SECTOR_9))
-    {
-      sector = FLASH_SECTOR_9;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_11) && (address >= ADDR_FLASH_DB_SECTOR_10))
-    {
-      sector = FLASH_SECTOR_10;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_12) && (address >= ADDR_FLASH_DB_SECTOR_11))
-    {
-      sector = FLASH_SECTOR_11;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_13) && (address >= ADDR_FLASH_DB_SECTOR_12))
-    {
-      sector = FLASH_SECTOR_12;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_14) && (address >= ADDR_FLASH_DB_SECTOR_13))
-    {
-      sector = FLASH_SECTOR_13;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_15) && (address >= ADDR_FLASH_DB_SECTOR_14))
-    {
-      sector = FLASH_SECTOR_14;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_16) && (address >= ADDR_FLASH_DB_SECTOR_15))
-    {
-      sector = FLASH_SECTOR_15;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_17) && (address >= ADDR_FLASH_DB_SECTOR_16))
-    {
-      sector = FLASH_SECTOR_16;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_18) && (address >= ADDR_FLASH_DB_SECTOR_17))
-    {
-      sector = FLASH_SECTOR_17;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_19) && (address >= ADDR_FLASH_DB_SECTOR_18))
-    {
-      sector = FLASH_SECTOR_18;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_20) && (address >= ADDR_FLASH_DB_SECTOR_19))
-    {
-      sector = FLASH_SECTOR_19;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_21) && (address >= ADDR_FLASH_DB_SECTOR_20))
-    {
-      sector = FLASH_SECTOR_20;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_22) && (address >= ADDR_FLASH_DB_SECTOR_21))
-    {
-      sector = FLASH_SECTOR_21;
-    }
-    else if ((address < ADDR_FLASH_DB_SECTOR_23) && (address >= ADDR_FLASH_DB_SECTOR_22))
-    {
-      sector = FLASH_SECTOR_22;
-    }
-    else // (address < FLASH_END_ADDR) && (address >= ADDR_FLASH_DB_SECTOR_23)
-    {
-      sector = FLASH_SECTOR_23;
-    }
+    // Return false if the byte in flash is not erased.
+    if (*(p++) != 0xFF) return false;
   }
 
-  return sector;
+  // Yes, the sector is erased.
+  return true;
+}
+
+// Erase the indicated flash sector.
+static int flash_erase_sector(uint32_t sector)
+{
+  HAL_StatusTypeDef status;
+  uint32_t sector_error;
+
+  // Sanity check the sector.
+  if (sector > FLASH_SECTOR_23) return 0;
+  
+  // Don't bother if the sector is already erased.  This helps
+  // save on wear and tear on the flash memory.
+  if (flash_sector_erased(sector)) return 0;
+
+  // Unlock the flash memory for writing.
+  HAL_FLASH_Unlock();
+
+  // Erase the specified flash Sector.
+  FLASH_EraseInitTypeDef erase_init;
+  memset(&erase_init, 0, sizeof(erase_init));
+  erase_init.TypeErase = FLASH_TYPEERASE_SECTORS;
+  erase_init.Banks = 0;
+  erase_init.Sector = sector;
+  erase_init.NbSectors = 1;
+  erase_init.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+  status = HAL_FLASHEx_Erase(&erase_init, &sector_error);
+
+  // Lock the flash memory from writing.
+  HAL_FLASH_Lock();
+
+  return status == HAL_OK ? 0 : -1;
 }
 
 // Initialize the flash driver.
 void flash_init(void)
 {
-  FLASH_OBProgramInitTypeDef ob_init; 
-
-  // Unlock to enable the flash control register access.
-  HAL_FLASH_Unlock();
-
-  // Allow access to option bytes sector.
-  HAL_FLASH_OB_Unlock();
-
-  // Get the Dual bank configuration status.
-  HAL_FLASHEx_OBGetConfig(&ob_init);
-
-  // Are we in single bank or dual bank mode?
-  flash_sb_mode = (ob_init.USERConfig & OB_NDBANK_SINGLE_BANK) == OB_NDBANK_SINGLE_BANK ? true : false;
-
-  // Lack to disable access to option bytes sector.
-  HAL_FLASH_OB_Lock();
-
-  // Lock to disable the flash control register access.
-  HAL_FLASH_Lock();
+  // Do nothing for now.
 }
 
 // Get the CRC value application firmware across the indicated number of bytes.
@@ -219,47 +146,29 @@ uint32_t flash_app_crc(uint32_t length)
 }
 
 // Erase the flash sectors associated with application firmware.
-// Returns 0 for success, -1 for error.
 int flash_app_erase(void)
 {
-  uint32_t sector_error = 0;
-  FLASH_EraseInitTypeDef erase_init;
+  uint32_t sector;
 
-  // Get the start and end sectors to be erased.
-  uint32_t start_sector = flash_sb_mode ? USER_FLASH_SB_START_SECTOR : USER_FLASH_DB_START_SECTOR;
-  uint32_t end_sector = flash_sb_mode ? USER_FLASH_SB_END_SECTOR : USER_FLASH_DB_END_SECTOR;
-
-  // Unlock to enable the flash control register access.
-  HAL_FLASH_Unlock();
-
-  // Fill in the erase init structure.
-  erase_init.TypeErase = FLASH_TYPEERASE_SECTORS;
-  erase_init.VoltageRange = FLASH_VOLTAGE_RANGE_3;
-  erase_init.Sector  = start_sector;
-  erase_init.NbSectors = end_sector - start_sector + 1;
-
-  // Note: If an erase operation in flash memory also concerns data in the data or instruction cache
-  // we must make sure that these data are rewritten before they are accessed during code
-  // execution. If this cannot be done safely, it is recommended to flush the caches by setting the
-  // DCRST and ICRST bits in the FLASH_CR register.
-  int status = HAL_FLASHEx_Erase(&erase_init, &sector_error) == HAL_OK ? 0 : -1;
-
-  // Lock to disable the flash control register access.
-  HAL_FLASH_Lock();
-
-  // Log an error if we did not succeed.
-  if (status != 0)
+  // Loop over each of the application flash sectors.
+  for (sector = USER_FLASH_START_SECTOR; sector <= USER_FLASH_END_SECTOR; ++sector)
   {
-    // Log the error.
-    syslog_printf(SYSLOG_CRITICAL, "FLASH: Error erasing application sectors in %s-bank mode",
-                  flash_sb_mode ? "single" : "dual");
+    // Erase the flash sector.
+    if (flash_erase_sector(sector) != 0)
+    {
+      // Log the error.
+      syslog_printf(SYSLOG_CRITICAL, "FLASH: Error erasing application sector %u at address 0x%08x",
+                    sector, flash_sector_addr[sector]);
+
+      // Return an error.
+      return -1;
+    }
   }
 
-  return status;
+  return 0;
 }
 
 // Start the writing of application firmware to flash.
-// Returns 0 for success, -1 for error.
 int flash_app_prog_start(uint32_t length)
 {
   // Sanity check the length to not be greater than the total size
@@ -316,7 +225,7 @@ int flash_app_prog_write(const uint8_t *buffer, uint32_t buflen)
         flash_app_error = true;
 
         // Log the critical error.
-        syslog_printf(SYSLOG_CRITICAL, "FLASH: Error programming flash word at address 0x%08x.", flash_app_addr);
+        syslog_printf(SYSLOG_CRITICAL, "FLASH: Error programming flash word at address 0x%08x.\n", flash_app_addr);
 
         // Return an error.
         return -1;
@@ -367,7 +276,7 @@ int flash_app_prog_end(void)
       flash_app_error = true;
 
       // Log the critical error.
-      syslog_printf(SYSLOG_CRITICAL, "FLASH: Error programming flash word at address 0x%08x.", flash_app_addr);
+      syslog_printf(SYSLOG_CRITICAL, "FLASH: Error programming flash word at address 0x%08x.\n", flash_app_addr);
     }
 
     // Reset the app data and count.
@@ -419,29 +328,12 @@ int flash_app_run(void)
     // Initialize user application's stack pointer. Be very careful here
     // because we loose access to local variables when modifying stacks.
     __set_MSP(*(__IO uint32_t*) USER_FLASH_APPLICATON);
-    __set_PSP(0);
+    __set_PSP(*(__IO uint32_t*) USER_FLASH_APPLICATON);
 
     // Set Privileged Thread mode & MSP.
     __set_CONTROL(0x00U);
     __DSB();
     __ISB();
-
-    // Clear out registers to mimic coming from reset.
-    // __ASM volatile ("MOV R0, #0");
-    // __ASM volatile ("MOV R1, #0");
-    __ASM volatile ("MOV R2, #0");
-    __ASM volatile ("MOV R3, #0");
-    __ASM volatile ("MOV R4, #0");
-    __ASM volatile ("MOV R5, #0");
-    __ASM volatile ("MOV R6, #0");
-    __ASM volatile ("MOV R7, #0");
-    __ASM volatile ("MOV R8, #0");
-    __ASM volatile ("MOV R9, #0");
-    __ASM volatile ("MOV R10, #0");
-    __ASM volatile ("MOV R11, #0");
-    __ASM volatile ("MOV R12, #0");
-    __ASM volatile ("MOV R14, #0xFFFF");
-    __ASM volatile ("MOVT R14, #:lower16:0xFFFF");
 
     // Jump to the application.  I know, this is probably the most hideious
     // piece of C code you'll ever lay your eyes on.  It is implemented this
